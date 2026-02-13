@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Hardin Valley Reform</title>
+
+    <link data-trunk rel="rust" />
+    <link data-trunk rel="css" href="./style.css" />
+    <!-- <link rel="icon" href="/images/logo.svg" type="image/svg"> -->
+
+    <script
+            src="https://cdn.jsdelivr.net/gh/scheng123321/tmm-html5-cdn1@51a72f0faa2d9cd524a0c11b4ca368350f988458/slope/TemplateData/UnityProgress.js"></script>
+        <script
+            src="https://cdn.jsdelivr.net/gh/scheng123321/tmm-html5-cdn1@51a72f0faa2d9cd524a0c11b4ca368350f988458/slope/TemplateData/unityloader41.js"></script>
+  </head>
+
+  <body>
+    <script>
+        function getGame() {
+          let gameInstance = UnityLoader.instantiate(
+              "gameContainer",
+              "https://cdn.jsdelivr.net/gh/scheng123321/tmm-html5-cdn1@51a72f0faa2d9cd524a0c11b4ca368350f988458/slope/Build/slope.json",
+              {
+                  onProgress: UnityProgress,
+                  Module: {
+                      onRuntimeInitialized: function () {
+                          UnityProgress(gameInstance, "complete");
+                      }
+                  }
+              }
+          );
+        }
+    </script>
+  </body>
+</html>
