@@ -1,7 +1,10 @@
 use yew::prelude::*;
 use yew_router::prelude::*;
-use crate::Route;
+use crate::{DATA_BASE, Route};
 use serde::{Deserialize, Serialize};
+use yew::platform::spawn_local;
+use yew::use_effect_with;
+
 
 // ***************************************
 // DATA STRUCTURES - BLOG
@@ -9,20 +12,24 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Clone, PartialEq, Serialize, Deserialize)]
 pub struct BlogPostData {
-    pub id: String,
+    pub id: i32,
     pub title: String,
     pub date: String,
     pub preview: String,
-    pub content: Vec<String>,
+    pub content: String,
 }
 
-pub fn get_blog_posts() -> Vec<BlogPostData> {
-    vec![
+pub fn string_to_lines(paragraph: String) -> Vec<String> {
+    paragraph.lines().map(|line| line.to_string()).collect()
+}
+
+pub fn get_blog_posts() -> Option<Vec<BlogPostData>> {
+    Some(vec![
         BlogPostData {
-            id: "origins-neoliberalism".to_string(),
+            id: 0,
             title: "The Origins of Neoliberalism".to_string(),
             date: "February 4, 2026".to_string(),
-            preview: "".to_string(),
+            preview: "Neoliberalism is the dominant ideology in modern society, rooted in the post-WW2 economic and political shifts.".to_string(),
             content: vec![
                 "In it's most abstract essence, Neoliberalism is the necessary dialectical evolution of 40s 50s social and economic conservatism, ie the bigots (racists), national chauvinists, and industrialists.".to_string(),
                 "As opportunist ideology progresses it goes through periods of hiding and periods of full honesty. Neoliberalism is that period of hiding that came after Fascist movements in the pre-war era.".to_string(),
@@ -37,13 +44,13 @@ pub fn get_blog_posts() -> Vec<BlogPostData> {
                 "You can think about it the same as the era of opportunist hiding before the Neoliberals, the Dixiecrats who touted cries of \"States\' Rights\" and the familiar liberal response of \"States' Rights to do what?\" With the obvious implication of slavery or some modern realization of socially chauvinistic economic exploitation or social exclusion. In the modern case, \"Spreading what freedom?\" With the implication of the freedom to have one's natural resources ruthlessly extracted.".to_string(),
                 "The origins of Neoliberalism as the dominant ideology chiefly come from free market liberals (neoclassical economists etc) after WW2 and the establishment (and subsequent end) of the Bretton Woods system. Then, the response to the depowering of the US dollar, we pegged it to oil, tying US financial interests solely with the interests of American oil. Through a number of systems, we enforced the \"petrodollar\" where oil acted similarly to gold pre-Nixon.".to_string(),
                 "So, the US started fighting wars over oil for its global Hegemony as part of a movement called Neoconservatism which called for Pinochet-esque interventions in places who are against US interests.".to_string(),
-            ],
+            ].concat(),
         },
         BlogPostData {
-            id: "basic-class".to_string(),
+            id: 1,
             title: "Abstracting Class".to_string(),
             date: "January 30, 2026".to_string(),
-            preview: "".to_string(),
+            preview: "Intersectionality and class in modern society".to_string(),
             content: vec![
                 "The majority of hierarchies are extremely similar to one another. The hierarchies of economics, society, and culture are all separate but they all contribute to what we call class.".to_string(),
                 "Of course there's the obvious economic element: the rich, haves class who control and exploit the working class who is exploited. in that same way you have the social element which contains many different sub-elements like sexuality, opinions, and various other things. ".to_string(),
@@ -52,13 +59,13 @@ pub fn get_blog_posts() -> Vec<BlogPostData> {
                 "In the same way, if you're in the heterosexual class you are above homosexuals in that hierarchy, and these hierarchies are perpetuated by a state, because the state is an organ of class rule. It's the same thing with culture, if the dominant culture is white Anglo-Saxon Protestantism, then the state is going to work for the benefit of that class. ".to_string(),
                 "There's exceptions to this rule of class you can be a part of the political ruling class, but that doesn't mean that you are part of the ruling classes of other hierarchies (e.g. a gay black man in congress or a transgender billionaire). ".to_string(),
                 "Class is a broad term that can define groups of people in various hierarchies. All of which culminates in a \"general hierarchy\" that the state enforces.".to_string(),
-            ],
+            ].concat(),
         },
         BlogPostData {
-            id: "what-is-the-state".to_string(),
+            id: 2,
             title: "What is the State?".to_string(),
             date: "January 30, 2026".to_string(),
-            preview: "".to_string(),
+            preview: "Laws are threats made by the dominant socioeconomic-ethnic group in a given nation. It\'s just the promise of violence that\'s enacted and the police are basically an occupying army.".to_string(),
             content: vec![
                 "The entire idea of a state is based on the repression of one class by another (ill write a much more lengthy essay on my interpretation of class later). The current US state is ruled by a political ruling class, those who we vote in to be our oppressors and by the economic elite who control our gov't.".to_string(),
                 "In this sense, it is those members of that class dictating the actions of the state. It is the dictatorship of the economic ruling class, ie the bourgeoisie. This state is hardly representative of the people, it is the directive of larger economic interests; all of which have a say at the table, which we will never see.".to_string(),
@@ -70,9 +77,9 @@ pub fn get_blog_posts() -> Vec<BlogPostData> {
                 "The system cannot be reformed, and the ready made state-machine cannot be appropriated by a new class of workers who would them become the new political ruling class, continuing the same system that they revolted against. The ready made state machine must be smashed in it's entirety.".to_string(),
                 "A state for and of the people must be created from the start for the interests of the proletariat. Then, we can start the work of creating a new state that seeks to destroy unjust hierarchies and create economic and political democracy. This is the dictatorship of the proletariat in the sense that we want it.".to_string(),
                 "Not as a single man dictatorship, as in the liberal sense, but in the sense of a new state of the proletariat, where they dictate that happens through true democratic means.".to_string(),
-            ],
+            ].concat(),
         },
-    ]
+    ])
 }
 
 // ***************************************
@@ -81,13 +88,44 @@ pub fn get_blog_posts() -> Vec<BlogPostData> {
 
 #[derive(Properties, PartialEq)]
 pub struct BlogPostProps {
-    pub id: String,
+    pub id: i32,
 }
 
-#[function_component(BlogPost)]
+#[component(BlogPost)]
 pub fn blog_post(props: &BlogPostProps) -> Html {
-    let posts = get_blog_posts();
-    let post = posts.iter().find(|p| p.id == props.id);
+    let counter = use_state(|| Vec::new());
+    
+    // Run on component mount
+    {
+        let counter = counter.clone();
+        use_effect_with((), move |_| {
+            let counter = counter.clone();
+            spawn_local(async move {
+                let mut __resp__: Option<postgrest::Builder> = None;
+                DATA_BASE.with_borrow_mut(|__db_k__| {
+                    __resp__ = Some(__db_k__.0
+                        .from("blogpost")
+                        .auth(__db_k__.1.clone())
+                        .select("*"));
+                });
+                if let Some(builder) = __resp__ {
+                    match builder.execute().await {
+                        Ok(res) => {
+                            if let Ok(text) = res.text().await {
+                                counter.set(serde_json::from_str::<Vec<BlogPostData>>(&text).unwrap());
+                            }
+                        }
+                        Err(_) => {counter.set(vec![BlogPostData{id: 0, title: "Error Loading Posts".to_string(), date: String::new(), preview: String::new(), content: String::new()}]);},
+                    }
+                }
+            });
+            || ()
+        });
+    }
+    
+    let posts: Vec<BlogPostData> = counter.to_vec();
+    
+    let post = posts.iter().find(|p| &p.id == &props.id);
 
     match post {
         Some(post) => render_post(post),
@@ -117,7 +155,7 @@ fn render_post(post: &BlogPostData) -> Html {
                 </header>
 
                 <div class="blog-post-content">
-                    {post.content.iter().map(|paragraph| html! {
+                    {string_to_lines(post.content.clone()).iter().map(|paragraph| html! {
                         <p>{paragraph}</p>
                     }).collect::<Html>()}
                 </div>
@@ -136,7 +174,37 @@ fn render_post(post: &BlogPostData) -> Html {
 
 #[function_component(Blog)]
 pub fn blog() -> Html {
-    let posts = get_blog_posts();
+    let counter = use_state(|| Vec::new());
+    
+    // Run on component mount
+    {
+        let counter = counter.clone();
+        use_effect_with((), move |_| {
+            let counter = counter.clone();
+            spawn_local(async move {
+                let mut __resp__: Option<postgrest::Builder> = None;
+                DATA_BASE.with_borrow_mut(|__db_k__| {
+                    __resp__ = Some(__db_k__.0
+                        .from("blogpost")
+                        .auth(__db_k__.1.clone())
+                        .select("*"));
+                });
+                if let Some(builder) = __resp__ {
+                    match builder.execute().await {
+                        Ok(res) => {
+                            if let Ok(text) = res.text().await {
+                                counter.set(serde_json::from_str::<Vec<BlogPostData>>(&text).unwrap());
+                            }
+                        }
+                        Err(_) => {counter.set(vec![BlogPostData{id: 0, title: "Error Loading Posts".to_string(), date: String::new(), preview: String::new(), content: String::new()}]);},
+                    }
+                }
+            });
+            || ()
+        });
+    }
+    
+    let posts: Vec<BlogPostData> = counter.to_vec();
 
     html! {
         <div class="blog-page">
@@ -147,7 +215,6 @@ pub fn blog() -> Html {
                         {"Updates, insights, and perspectives on local governance and community issues"}
                     </p>
                 </header>
-
                 <div class="blog-grid">
                     {posts.iter().map(|post| html! {
                         <article class="blog-card">
@@ -156,13 +223,13 @@ pub fn blog() -> Html {
                                     <span class="blog-date">{&post.date}</span>
                                 </div>
                                 <h2 class="blog-title">
-                                    <Link<Route> to={Route::BlogPost { id: post.id.clone() }}>
+                                    <Link<Route> to={Route::BlogPost { id: post.id }}>
                                         {&post.title}
                                     </Link<Route>>
                                 </h2>
                                 <p class="blog-preview">{&post.preview}</p>
                                 <Link<Route> 
-                                    to={Route::BlogPost { id: post.id.clone() }} 
+                                    to={Route::BlogPost { id: post.id }} 
                                     classes="read-more"
                                 >
                                     {"Read More →"}
