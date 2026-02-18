@@ -22,6 +22,31 @@ pub fn get_books() -> Vec<Book> {
             cover_url: "https://images.placeholders.dev/?width=300&height=450&text=Federalist%20Papers&bgColor=%23f7f6f3&textColor=%236b7280".to_string(),
             description: "Essential reading for understanding the foundations of American government and the principles of federalism, separation of powers, and republican governance.".to_string(),
         },
+        Book {
+            title: "On the Cult of Personality and Its Consequences".to_string(),
+            author: "Nikita Khuruschev".to_string(),
+            cover_url: "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1717972504i/214450694.jpg".to_string(),
+            description: "A former Soviet leader gives a speech about the dangers of a cult of personality.".to_string(),
+        },
+        Book {
+            title: "The Social Contract".to_string(),
+            author: "Jean-Jacques Rousseau".to_string(),
+            cover_url: "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1388197284i/12651.jpg".to_string(),
+            description: "Rousseau argues that the citizens of a country are bound to it's government only while it upholds their interests.".to_string(),
+        },
+        Book {
+            title: "Literature and Revolution".to_string(),
+            author: "Leon Trotsky".to_string(),
+            cover_url: "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1388357786i/184429.jpg".to_string(),
+            description: "Leon Trotsky talks about the lore literature played in the russian revolution and how it influences one's worldview.".to_string(),
+        },
+        Book {
+            title: "The Society of the Spectacle".to_string(),
+            author: "Guy Debord".to_string(),
+            cover_url: "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1732127318i/381440.jpg".to_string(),
+            description: "Debord critisizes modern consumer culture, and how it prioritizes material possetions over social relationships.".to_string(),
+        },
+
     ]
 }
 
