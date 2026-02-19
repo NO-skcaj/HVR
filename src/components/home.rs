@@ -48,8 +48,8 @@ pub fn home() -> Html {
                         {"Building a stronger community through principled action and civic engagement"}
                     </p>
                     <div class="hero-cta">
-                        <a href="/program" class="btn btn-primary">{"Learn About Our Program"}</a>
-                        <a href="/blog" class="btn btn-primary">{"Read Our Blog"}</a>
+                        <Link<Route> to={Route::Program} classes="btn btn-primary">{"Learn About Our Program"}</Link<Route>>
+                        <Link<Route> to={Route::Blog}    classes="btn btn-primary">{"Read Our Blog"}</Link<Route>>
                     </div>
                 </div>
             </section>
@@ -68,7 +68,7 @@ pub fn home() -> Html {
                     <div class="feature-grid">
                         <div class="feature-card">
                             <h3>{"People First"}</h3>
-                            <p>{"Prioritizing the needs and voices of the people who are the foundation of our democarcy."}</p>
+                            <p>{"Prioritizing the needs and voices of the people, not those of the rich and powerful."}</p>
                         </div>
                         <div class="feature-card">
                             <h3>{"Labor Power"}</h3>
@@ -76,7 +76,7 @@ pub fn home() -> Html {
                         </div>
                         <div class="feature-card">
                             <h3>{"No More Planlessness"}</h3>
-                            <p>{"For too long, the unplanned development of the national economy has left communities vulnerable and without clear direction."}</p>
+                            <p>{"For too long, the unplanned development of the national economy has left industries in directions that are against the interests of the people."}</p>
                         </div>
                     </div>
                 </div>

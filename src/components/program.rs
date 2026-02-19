@@ -76,8 +76,12 @@ pub fn get_beliefs() -> Vec<Belief> {
             description: "We believe that international economic cooperation is essential for building a more just and peaceful world. By working together across borders, we can address global challenges like poverty, inequality, and climate change.".to_string(),
         },
         Belief {
-            name: "Free college for the as advanced development of an advanced economy".to_string(),
-            description: "We believe that free college is essential for building a more advanced and equitable economy. By removing financial barriers to higher education, we can ensure that all students have the opportunity to develop their skills and contribute to the advancement of our society.".to_string(),
+            name: "Free college for advanced development of an advanced economy".to_string(),
+            description: "We believe that free education is essential for building a more advanced and equitable economy. By removing financial barriers to higher education, we can ensure that all students have the opportunity to develop their skills and contribute to the advancement of our society.".to_string(),
+        },
+        Belief {
+            name: "Universal healthcare".to_string(),
+            description: "We believe that universal healthcare is essential for ensuring that all people have access to quality medical care regardless of their economic status.".to_string(),
         },
         Belief {
             name: "A True Democratic Government".to_string(),
